@@ -1307,6 +1307,11 @@ class DagFileProcessorManager(LoggingMixin):
                     )
                 ).all()
             )
+
+            ljs = session.query(LJ).join(TI, TI.job_id == LJ.id).filter(TI.state == State.RUNNING).all()
+            for lj in ljs:
+                self.log.info(f'LJ: id={lj.id}, state={lj.state}, heartbeat={lj.latest_heartbeat}')
+
             self._last_zombie_query_time = timezone.utcnow()
             for ti in tis:
                 sti = SimpleTaskInstance(ti)
